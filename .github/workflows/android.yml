@@ -15,9 +15,45 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: Install Android packages
-        run: sdkmanager "platform-tools" "build-tools;35.0.1" "platforms;android-35"
+      - name: Configure runner Android SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ -z "${ANDROID_HOME:-}" ] || [ ! -d "$ANDROID_HOME" ]; then
+            export ANDROID_HOME=/usr/local/lib/android/sdk
+            echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+          fi
+          if [ -z "${ANDROID_SDK_ROOT:-}" ]; then
+            export ANDROID_SDK_ROOT="$ANDROID_HOME"
+            echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          fi
+          SDKMANAGER="$(find "$ANDROID_HOME/cmdline-tools" -type f -path '*/bin/sdkmanager' | sort -V | tail -n 1)"
+          if [ -z "$SDKMANAGER" ] || [ ! -x "$SDKMANAGER" ]; then
+            echo "No usable sdkmanager found under $ANDROID_HOME/cmdline-tools" >&2
+            exit 1
+          fi
+          echo "SDKMANAGER=$SDKMANAGER" >> "$GITHUB_ENV"
+          echo "Using Android SDK: $ANDROID_HOME"
+          echo "Using sdkmanager: $SDKMANAGER"
+          "$SDKMANAGER" --version
+      - name: Install Android packages if missing
+        shell: bash
+        run: |
+          set -euo pipefail
+          packages=()
+          [ -x "$ANDROID_HOME/platform-tools/adb" ] || packages+=("platform-tools")
+          [ -d "$ANDROID_HOME/build-tools/35.0.1" ] || packages+=("build-tools;35.0.1")
+          [ -d "$ANDROID_HOME/platforms/android-35" ] || packages+=("platforms;android-35")
+          if [ ${#packages[@]} -gt 0 ]; then
+            echo "Installing missing Android packages: ${packages[*]}"
+            yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+            "$SDKMANAGER" --install "${packages[@]}"
+          else
+            echo "Required Android 35 packages are already present on the GitHub runner."
+          fi
+          test -x "$ANDROID_HOME/platform-tools/adb"
+          test -d "$ANDROID_HOME/build-tools/35.0.1"
+          test -d "$ANDROID_HOME/platforms/android-35"
       - name: Download pinned Godot and export templates
         shell: bash
         run: |
@@ -46,6 +82,8 @@ jobs:
           ! grep -E 'SCRIPT ERROR|FAIL:' audio-tests.log
           Godot_v4.7.2-stable_linux.x86_64 --headless --path project --script ../tests/defeat_voices.gd -- --test 2>&1 | tee defeat-voice-tests.log
           ! grep -E 'SCRIPT ERROR|FAIL:' defeat-voice-tests.log
+          Godot_v4.7.2-stable_linux.x86_64 --headless --path project --script ../tests/battle_speed.gd -- --test 2>&1 | tee battle-speed-tests.log
+          ! grep -E 'SCRIPT ERROR|FAIL:' battle-speed-tests.log
           Godot_v4.7.2-stable_linux.x86_64 --headless --path project --script ../tests/horde.gd -- --test 2>&1 | tee horde-tests.log
           ! grep -E 'SCRIPT ERROR|FAIL:' horde-tests.log
           Godot_v4.7.2-stable_linux.x86_64 --headless --path project --script ../tests/ogre_elites.gd -- --test 2>&1 | tee ogre-elites-tests.log
