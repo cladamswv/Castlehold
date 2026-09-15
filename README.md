@@ -1,25 +1,44 @@
-# Castlehold — Stone & Steel 0.4.1
+# Castlehold — Stone & Steel 0.4.4
 
-Warmer, finer castle masonry, textured medieval armor and cloth, and more detailed ogre faces and bodies improve the existing 3D cast. **Attackers deal 12% more damage**, including charges and boss specials. Defeated men give a short oof; orcs and ogres have distinct rough grunts. Three original synthesized variations per faction play through the adjustable Sound effects level, with at most two overlapping defeat voices.
+Warmer, finer castle masonry, textured medieval armor and cloth, and more detailed ogre faces and bodies improve the existing 3D cast. **Attackers deal 12% more damage**, including charges and boss specials. Defeated men give a short oof; orcs and ogres have distinct rough grunts. Three original synthesized variations per faction play through the adjustable Sound effects level, through a fixed four-channel voice pool so several nearby deaths can be heard without unbounded stacking.
 
 Boss bounties and wave income increase to fund replacements after stronger attacks. Four giant bosses remain at waves **25, 50, 75 and 100**. This complete source package includes nonstop assaults, persistent troops, full pause/recruitment, finger scouting and original medieval music at an adjustable **35%** default.
 
 ![Actual castle and character meshes, CPU material preview](docs/stone-and-steel-review.png)
 
-The image inspects actual project geometry with approximate lighting. It is not an Android gameplay screenshot. See `docs/GRAPHICS_AND_SOUND_UPDATE.md` for the changes and `docs/VALIDATION.md` for checks and remaining device review.
+The image inspects actual project geometry with approximate lighting. It is not an Android gameplay screenshot. See `docs/GRAPHICS_AND_SOUND_UPDATE.md`, `docs/CASTLE_OVERHAUL_0.4.4.md` and `docs/VALIDATION.md` for the changes and remaining device review.
+
+## 0.4.4 — Castle overhaul
+
+- The castle silhouette is pushed much harder with a **larger keep**, **taller watchtower**, **chunkier gatehouse**, **bigger front towers**, **twin roof turrets** and stronger vertical emphasis.
+- The gatehouse gains a central watch chamber and heavier front buttresses, while the keep gains more height, a broader roof, extra banners and a more dramatic medieval skyline.
+- Side corner towers are larger and roofed, giving the fortress a more heroic PS2-era strategy-game read from the battle camera.
+
+## 0.4.3 — Castle polish
+
+- The castle silhouette is upgraded with **machicolation shelves**, stronger gatehouse overhangs, a more decorated keep frontage, corner quoins, buttresses, a roof dormer, chimneys and extra tower detailing.
+- Rampart walls gain under-parapet stone supports, and the mage tower receives a brazier plus extra crown detail for a richer skyline.
+- Android version code is 12. Gameplay balance, speed control, checkpoints and louder character voices remain the 0.4.2 baseline.
+
+## 0.4.2 — Speed & Voices
+
+- New top-bar **1× / 2× / 3×** battle-speed button. It works during combat and while paused, persists in checkpoints, and resets the engine safely when Castlehold closes.
+- Defeat voices now use a fixed **four-channel** pool instead of two channels, with louder human/orc/ogre mixes and speed-aware anti-spam timing so deaths remain audible at 2× and 3×.
+- Android version code is 11. CI now runs a dedicated battle-speed regression test in addition to the existing audio and gameplay checks.
 
 ## Play
 
 - The first assault begins after a four-second countdown. No BEGIN WAVE button or preparation rounds.
 - Reinforcements arrive over **10–15 seconds**, followed by a **3–5 second gap** before the next wave. Existing enemies keep fighting throughout.
 - Recruit Archers, Swordsmen, Spearmen and mounted Knights using the bottom cards. Buy replacements or repair the Gate/Keep at any time, including while paused.
+- **1× / 2× / 3×** changes the entire battle simulation speed while keeping movement, projectiles, combat timers and animations synchronized. The choice is checkpointed.
 - **Pause / Resume** freezes and resumes the wave clock, movement, arrows, fireballs and animations. Switching away from the app also pauses it and suspends audio. Returning restores music; tap Resume when ready to fight.
 - **Settings** provides Music and Sound effects sliders, a Mute all audio switch, and Test effects. Changes apply immediately and save automatically. The battle pauses while Settings is open; music continues so you can hear your adjustments. Closing Settings or Credits restores the previous pause state.
 - Drag empty ground to scout approaching enemies. Tap **Castle** to return home.
 - Surviving soldiers heal when the next wave starts. Their positions and combat continue; defeated troops stay lost. Castle damage persists.
 - At wave 100, defeat the remaining attackers to win. If the Keep falls, **Retry Wave** restores the latest checkpoint and pauses so you can plan.
 
-Defenders carry visible longbows, swords, heraldic shields, long spears and mounted lances. Enemies have broad jaws, tusks, pointed ears, rough iron and patched rust cloth. Ironshields resist arrows; meet them with swords. Spearmen counter wargs. Knights pursue hunters and shamans along the wings, and archers focus on ogres threatening the gate. Fire shamans first appear at wave 18; warthog riders arrive at wave 25. Their fireballs hit on arrival, with a small blast that damages at most two secondary defenders. The castle uses smaller sandstone courses, beveled blocks, shaped radial turret masonry, an arched gatehouse and a destructible timber gate/portcullis.
+Defenders carry visible longbows, swords, heraldic shields, long spears and mounted lances. Enemies have broad jaws, tusks, pointed ears, rough iron and patched rust cloth. Ironshields resist arrows; meet them with swords. Spearmen counter wargs. Knights pursue hunters and shamans along the wings, and archers focus on ogres threatening the gate. Fire shamans first appear at wave 18; warthog riders arrive at wave 25. Their fireballs hit on arrival, with a small blast that damages at most two secondary defenders. The castle uses smaller sandstone courses, beveled blocks, shaped radial turret masonry, larger towers, a layered keep skyline, a heavy arched gatehouse and a destructible timber gate/portcullis.
 
 ## Fresh install from a phone
 
@@ -48,6 +67,7 @@ godot --headless --path project --script ../tests/camera_and_fortress.gd -- --te
 godot --headless --path project --script ../tests/graphics.gd -- --test
 godot --headless --path project --script ../tests/audio_settings.gd -- --test
 godot --headless --path project --script ../tests/defeat_voices.gd -- --test
+godot --headless --path project --script ../tests/battle_speed.gd -- --test
 godot --headless --path project --script ../tests/horde.gd -- --test
 godot --headless --path project --script ../tests/ogre_elites.gd -- --test
 godot --headless --path project --script ../tests/bosses.gd -- --test

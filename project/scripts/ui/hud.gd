@@ -12,6 +12,7 @@ var repair_keep: Button
 var retry: Button
 var overlay: PanelContainer
 var pause_button: Button
+var speed_button: Button
 var recenter_button: Button
 var recruit_buttons: Dictionary = {}
 var was_paused := false
@@ -50,6 +51,7 @@ func build(owner_game: Node3D):
 	recenter_button=button("Castle",func():game.camera.recenter(),94);row.add_child(recenter_button);recenter_button.disabled=true
 	game.camera.pan_changed.connect(func(away:bool):recenter_button.disabled=not away)
 	pause_button=button("Pause",toggle_pause,98);row.add_child(pause_button)
+	speed_button=button("1×",game.cycle_battle_speed,84);speed_button.tooltip_text="Battle speed: tap to cycle 1× / 2× / 3×";row.add_child(speed_button)
 	row.add_child(button("Settings",show_settings,112));row.add_child(button("Credits",show_credits,94))
 	boss_panel=PanelContainer.new();boss_panel.size_flags_horizontal=Control.SIZE_SHRINK_CENTER
 	boss_panel.custom_minimum_size=Vector2(560,0);boss_panel.mouse_filter=Control.MOUSE_FILTER_IGNORE
@@ -141,6 +143,7 @@ func refresh():
 	top.text="%d GOLD    •    WAVE %d / %d    •    %s\nGATE %d%%    •    KEEP %d%%    •    %d ENEMIES"%[game.economy.gold,game.wave,int(game.balance.wave_count),status,game.castle.structures.gate.hp/game.castle.structures.gate.max_hp*100,game.castle.structures.keep.hp/game.castle.structures.keep.max_hp*100,game.enemy_count()]
 	pause_label.visible=get_tree().paused and game.live_play();pause_button.text="Resume" if get_tree().paused else "Pause"
 	pause_button.disabled=not game.live_play() or is_instance_valid(overlay)
+	speed_button.text="%d×"%roundi(game.battle_speed);speed_button.disabled=not game.live_play() or is_instance_valid(overlay)
 	cards.visible=game.live_play();retry.visible=game.phase in ["defeat","complete"];retry.text="PLAY AGAIN" if game.phase=="complete" else "RETRY WAVE"
 	for id in recruit_buttons:
 		var b:Button=recruit_buttons[id];b.text="%s ×%d\n%d gold"%[game.definitions[id].title,game.army[id],game.definitions[id].cost];b.disabled=not game.can_purchase(id)
@@ -187,7 +190,7 @@ func show_credits():
 	if is_instance_valid(overlay) and overlay_kind=="credits":close_credits();return
 	var col:=begin_overlay("credits",Vector2(940,575))
 	var text:=TextEdit.new();text.custom_minimum_size=Vector2(900,460);text.editable=false
-	text.text="CASTLEHOLD — Stone & Steel 0.4.1\nOriginal medieval defenders, orc warriors, warg mounts, siege ogres, giant warthog riders, fire shamans, four giant siege bosses, sculpted armor, surface textures, fortress geometry and synthesized audio created for this game.\nDefeat voices: original synthesized human oofs, orc exhalations and ogre grunts. No external voice recordings.\nMusic: The Valley Watch — original composition and synthesized lute, recorder, dulcimer and hand percussion. No third-party music or samples.\n100 automatic waves. 10–15 second assaults, 3–5 second reinforcement gaps.\n\nGodot Engine\n"+Engine.get_license_text()+"\n\nThird-party engine notices\n"+str(Engine.get_license_info())
+	text.text="CASTLEHOLD — Stone & Steel 0.4.4\nOriginal medieval defenders, orc warriors, warg mounts, siege ogres, giant warthog riders, fire shamans, four giant siege bosses, sculpted armor, surface textures, overhauled fortress geometry and synthesized audio created for this game.\nDefeat voices: original synthesized human oofs, orc exhalations and ogre grunts, mixed louder through a four-channel voice pool. No external voice recordings.\nBattle speed: tap the 1× / 2× / 3× control during play or while paused.\nMusic: The Valley Watch — original composition and synthesized lute, recorder, dulcimer and hand percussion. No third-party music or samples.\n100 automatic waves. 10–15 second assaults, 3–5 second reinforcement gaps.\n\nGodot Engine\n"+Engine.get_license_text()+"\n\nThird-party engine notices\n"+str(Engine.get_license_info())
 	text.wrap_mode=TextEdit.LINE_WRAPPING_BOUNDARY;col.add_child(text);col.add_child(button("Close",close_credits));refresh()
 func close_credits():
 	if not is_instance_valid(overlay):return

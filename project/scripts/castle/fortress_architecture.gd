@@ -110,6 +110,37 @@ func brazier(parent: Node3D, at: Vector3):
 		block(parent,at+Vector3(cos(a)*.22,.77,sin(a)*.22),Vector3(.035,.24,.035),"334e57")
 	var ember:=mat("d78b3e");ember.emission_enabled=true;ember.emission=Color("af4f1d");ember.emission_energy_multiplier=.45
 	round_part(parent,at+Vector3(0,.735,0),.185,.12,.13,"d78b3e",10)
+func corbel(parent: Node3D, at: Vector3, width: float=.22, depth: float=.24, height: float=.24):
+	block(parent,at+Vector3(-depth*.20,-height*.08,0),Vector3(depth*.80,height*.34,width),"c4a779")
+	block(parent,at+Vector3(-depth*.02,-height*.28,0),Vector3(depth*.56,height*.28,width*.82),"ae9066")
+	block(parent,at+Vector3(depth*.08,-height*.46,0),Vector3(depth*.32,height*.18,width*.58),"917654")
+func machicolation_row(parent: Node3D, x: float, y: float, start_z: float, end_z: float, count: int, depth: float=.24):
+	if count < 1:
+		return
+	if count == 1:
+		corbel(parent,Vector3(x,y,(start_z+end_z)*.5),.32,depth,.28)
+		block(parent,Vector3(x+.09,y+.07,(start_z+end_z)*.5),Vector3(depth,.10,abs(end_z-start_z)+.44),"c7aa7c")
+		return
+	var span:float=end_z-start_z
+	var step:float=span/float(count-1)
+	for i in count:
+		var z:float=start_z+step*i
+		var width:float=minf(.58,abs(step)*.82+.16)
+		corbel(parent,Vector3(x,y,z),width,depth,.28)
+		block(parent,Vector3(x+.09,y+.07,z),Vector3(depth,.10,width+.06),"c7aa7c")
+func quoin_stack(parent: Node3D, at: Vector3, rows: int, height_step: float, depth: float=.20, span: float=.33):
+	for row in rows:
+		var width:float=span+.06 if row % 2 == 0 else span-.02
+		block(parent,at+Vector3(0,row*height_step,0),Vector3(depth,height_step-.02,width),"c4a779")
+func chimney(parent: Node3D, at: Vector3, height: float=.92):
+	block(parent,at+Vector3(0,height*.5,0),Vector3(.34,height,.34),"947757")
+	block(parent,at+Vector3(0,height+.07,0),Vector3(.45,.12,.45),"c3a77a")
+	block(parent,at+Vector3(.02,height+.23,0),Vector3(.18,.24,.18),"1d343c")
+func dormer(parent: Node3D, at: Vector3):
+	block(parent,at+Vector3(0,.28,0),Vector3(.72,.56,.74),"957a56")
+	slit(parent,at+Vector3(.32,.28,0),.17,.34)
+	block(parent,at+Vector3(.31,.28,0),Vector3(.05,.52,.51),"594c34")
+	roof(parent,at+Vector3(0,.57,0),.94,.82,.40)
 func stone_wedge(parent: Node3D, at: Vector3, radius: float, height: float, angle: float, color: String):
 	var key:="wedge"+str(radius)+str(height)
 	if not block_meshes.has(key):
@@ -128,7 +159,7 @@ func stone_wedge(parent: Node3D, at: Vector3, radius: float, height: float, angl
 	part(parent,block_meshes[key],Transform3D(Basis(Vector3.UP,-angle),at),color)
 func turret(parent: Node3D, at: Vector3, radius: float, height: float, roofed: bool=false):
 	var holder:=Node3D.new();holder.name="StoneTurret";parent.add_child(holder);holder.position=at
-	round_part(holder,Vector3(0,.17,0),radius*1.20,radius*1.13,.34,"776246")
+	round_part(holder,Vector3(0,.17,0),radius*1.22,radius*1.15,.34,"776246")
 	var courses:=int(ceil(height/.21));var course:float=(height-.34)/courses
 	round_part(holder,Vector3(0,(height+.34)*.5,0),radius-.07,radius-.07,height-.34,"756042",20)
 	for row in courses:
@@ -137,21 +168,22 @@ func turret(parent: Node3D, at: Vector3, radius: float, height: float, roofed: b
 			var tone:String=stone_colors[(row*7+segment*3+segment/3)%stone_colors.size()]
 			if row<2 and (segment+row)%4==0:tone="7d7855"
 			stone_wedge(holder,Vector3(0,.34+(row+.5)*course,0),radius,course-.014,a,tone)
+	round_part(holder,Vector3(0,height-.36,0),radius+.03,radius+.06,.12,"8e7350")
 	round_part(holder,Vector3(0,height-.03,0),radius+.10,radius+.13,.19,"b69970")
 	round_part(holder,Vector3(0,height+.10,0),radius+.15,radius+.15,.14,"9d815b")
 	if roofed:
-		for i in 9:
-			var r:float=(radius+.22)*(1-i*.105)
-			round_part(holder,Vector3(0,height+.24+i*.16,0),r,maxf(.02,r-.14),.21,"254958" if i%2 else "345e6b",24)
-		round_part(holder,Vector3(0,height+1.70,0),.055,0,.48,"c6a356",8)
+		for i in 10:
+			var r:float=(radius+.24)*(1-i*.10)
+			round_part(holder,Vector3(0,height+.26+i*.17,0),r,maxf(.02,r-.15),.22,"254958" if i%2 else "345e6b",24)
+		round_part(holder,Vector3(0,height+1.95,0),.065,0,.62,"c6a356",8)
 	else:
-		for i in 10:
-			var a:float=i*TAU/10
-			block(holder,Vector3(cos(a)*radius,height+.40,sin(a)*radius),Vector3(.34,.48,.36),"bca178",-a)
-		for i in 10:
-			var a:float=i*TAU/10
+		for i in 12:
+			var a:float=i*TAU/12
+			block(holder,Vector3(cos(a)*radius,height+.43,sin(a)*radius),Vector3(.32,.54,.34),"bca178",-a)
+		for i in 12:
+			var a:float=i*TAU/12
 			block(holder,Vector3(cos(a)*(radius+.035),height-.31,sin(a)*(radius+.035)),Vector3(.20,.28,.17),"ae926a",-a)
-	for y in [height*.40,height*.72]:slit(holder,Vector3(radius+.012,y,0),.11,.52)
+	for y in [height*.34,height*.62,height*.82]:slit(holder,Vector3(radius+.012,y,0),.11,.50)
 func wall(parent: Node3D, length: float):
 	# The battlement floor remains exactly at the existing archer foot height.
 	block(parent,Vector3(-.10,1.50,0),Vector3(1.10,3.0,length),"69563e")
@@ -165,6 +197,7 @@ func wall(parent: Node3D, length: float):
 			if row<2 and col%3==0:tone="7d7855"
 			block(parent,Vector3(.49,.097+row*.1835,(left+right)*.5),Vector3(.22,.169,right-left-.014),tone)
 	block(parent,Vector3(-.45,3.055,0),Vector3(2.60,.25,length+.14),"bc9e72")
+	machicolation_row(parent,.72,2.73,-length*.30,length*.30,3,.20)
 	for i in 5:
 		var z:float=(i-2)*(length/4.5)
 		block(parent,Vector3(.47,3.23,z),Vector3(.40,.17,.46),"92754f")
@@ -189,19 +222,32 @@ func gatehouse():
 		for row in 8:block(center,Vector3(0,.12+row*.238,z),Vector3(1.28,.222,.31),stone_colors[row%5])
 	arch(center,Vector3(0,1.65,0),1.35,.34,1.30)
 	arch(center,Vector3(.61,1.65,0),1.71,.10,.16)
-	block(center,Vector3(-.05,3.40,0),Vector3(1.48,.17,3.70),"b2966e")
-	block(center,Vector3(-.05,3.75,0),Vector3(1.35,.55,3.70),"95764f")
-	for z in [-1.2,0,1.2]:
-		block(center,Vector3(.68,3.78,z),Vector3(.045,.32,.15),"243d46")
-		block(center,Vector3(.48,4.16,z),Vector3(.5,.30,.48),"bba072")
-	crest(center,Vector3(.79,3.78,0))
-	for z in [-1.30,-.65,.65,1.30]:
-		block(center,Vector3(.76,3.33,z),Vector3(.38,.26,.16),"ae926a")
-		block(center,Vector3(.84,3.49,z),Vector3(.48,.08,.23),"bea071")
-	for z in [-1.98,1.98]:
-		turret(center,Vector3(.91,0,z),.67,4.02)
-		banner(center,Vector3(1.61,2.56,z),.76)
-		brazier(center,Vector3(1.99,0,z*1.55))
+	block(center,Vector3(-.05,3.42,0),Vector3(1.58,.20,3.95),"b2966e")
+	block(center,Vector3(-.05,3.84,0),Vector3(1.48,.64,3.88),"95764f")
+	machicolation_row(center,.98,3.30,-1.10,1.10,4,.24)
+	block(center,Vector3(.98,3.36,0),Vector3(.28,.13,2.92),"c5a87b")
+	for z in [-.88,.88]:
+		slit(center,Vector3(.98,2.86,z),.10,.48)
+	for z in [-1.25,0,1.25]:
+		block(center,Vector3(.72,3.82,z),Vector3(.045,.36,.15),"243d46")
+		block(center,Vector3(.50,4.20,z),Vector3(.54,.32,.50),"bba072")
+	crest(center,Vector3(.84,3.86,0))
+	block(center,Vector3(-.10,4.62,0),Vector3(1.34,.86,2.34),"8b704e")
+	for z in [-.68,.68]:
+		slit(center,Vector3(.56,4.56,z),.10,.34)
+	roof(center,Vector3(-.10,5.05,0),1.72,2.58,.88)
+	block(center,Vector3(.24,6.02,0),Vector3(.07,1.02,.07),"b49658")
+	banner(center,Vector3(.24,6.16,0),.60)
+	for z in [-1.36,-.68,.68,1.36]:
+		block(center,Vector3(.82,3.38,z),Vector3(.40,.27,.16),"ae926a")
+		block(center,Vector3(.90,3.56,z),Vector3(.52,.09,.23),"bea071")
+	for z in [-1.70,-.98,.98,1.70]:
+		block(center,Vector3(1.28,.92,z),Vector3(.50,1.84,.28),"8b6e49")
+		block(center,Vector3(1.42,1.78,z),Vector3(.28,.14,.34),"be9f70")
+	for z in [-2.05,2.05]:
+		turret(center,Vector3(.95,0,z),.82,4.68)
+		banner(center,Vector3(1.72,2.84,z),.86)
+		brazier(center,Vector3(2.10,0,z*1.40))
 	# Eight individual arched timber boards retain controlled debris behavior.
 	for i in 8:
 		var z:float=(i-3.5)*.326
@@ -225,38 +271,49 @@ func gatehouse():
 	block(center,Vector3(.58,.045,0),Vector3(2.7,.09,3.0),"767d6c")
 func keep():
 	var k:CastleStructure=game.castle.structures.keep
-	block(k,Vector3(0,.14,0),Vector3(4.10,.28,4.8),"6d573d")
-	block(k,Vector3(0,2.46,0),Vector3(3.6,4.64,4.3),"88704e")
-	for row in 24:
+	block(k,Vector3(-.10,.16,0),Vector3(4.45,.32,5.25),"6d573d")
+	block(k,Vector3(-.10,2.82,0),Vector3(3.95,5.34,4.65),"88704e")
+	for row in 28:
+		for col in 16:
+			var z:float=(col-7.5)*.296
+			block(k,Vector3(1.96,.38+row*.18,z),Vector3(.12,.168,.282),stone_colors[(row*7+col*3+col/4)%5])
 		for col in 14:
-			var z:float=(col-6.5)*.302
-			block(k,Vector3(1.82,.335+row*.19,z),Vector3(.12,.176,.288),stone_colors[(row*7+col*3+col/4)%5])
-		for col in 12:
-			var x:float=(col-5.5)*.297
-			block(k,Vector3(x,.335+row*.19,2.165),Vector3(.283,.176,.11),stone_colors[(row*7+col*3+2)%5])
-	for z in [-1.9,1.9]:
-		block(k,Vector3(1.99,2.0,z),Vector3(.32,4.0,.34),"745b3d")
-		for row in 10:block(k,Vector3(2.01,.3+row*.40,z),Vector3(.36,.36,.39),"bd9e72")
-	for y in [1.8,3.6]:
-		for z in [-1.12,0,1.12]:
-			slit(k,Vector3(1.906,y,z),.28,.77)
-			arch(k,Vector3(1.95,y+.37,z),.15,.11,.12)
-	# A projecting string course and stone brackets break up the keep's height.
-	block(k,Vector3(1.94,2.69,0),Vector3(.20,.10,4.42),"bda078")
-	block(k,Vector3(0,2.69,2.24),Vector3(3.96,.10,.18),"bda078")
-	for z in [-1.5,-.75,0,.75,1.5]:block(k,Vector3(1.94,4.63,z),Vector3(.21,.22,.18),"ae926a")
-	block(k,Vector3(0,4.87,0),Vector3(3.98,.22,4.69),"c6aa7b")
-	roof(k,Vector3(0,4.99,0),4.94,4.2,1.85)
-	# High corner watchtower and an inhabited lower hall give layered massing.
-	turret(k,Vector3(-1.32,0,-1.72),.65,5.82,true)
-	block(k,Vector3(.15,1.04,3.03),Vector3(2.65,2.08,1.70),"957c58")
-	roof(k,Vector3(.15,2.10,3.03),2.01,2.95,.92)
-	for x in [-.6,.7]:
-		block(k,Vector3(x,.95,3.9),Vector3(.25,.57,.03),"253c42")
-	block(k,Vector3(1.52,1.15,3.02),Vector3(.06,1.68,.66),"594c34")
-	for z in [-.52,.52]:banner(k,Vector3(1.97,2.60,z),.9)
-	block(k,Vector3(.25,7.09,0),Vector3(.065,1.10,.065),"b49658")
-	banner(k,Vector3(.25,7.39,0),.85)
+			var x:float=(col-6.5)*.302
+			block(k,Vector3(x,.38+row*.18,2.34),Vector3(.288,.168,.11),stone_colors[(row*7+col*3+2)%5])
+	for z in [-2.05,2.05]:
+		block(k,Vector3(2.14,2.25,z),Vector3(.34,4.52,.36),"745b3d")
+		for row in 12:block(k,Vector3(2.16,.36+row*.37,z),Vector3(.38,.34,.40),"bd9e72")
+	for y in [2.0,4.2]:
+		for z in [-1.28,0,1.28]:
+			slit(k,Vector3(2.03,y,z),.28,.82)
+			arch(k,Vector3(2.08,y+.39,z),.15,.11,.12)
+	quoin_stack(k,Vector3(2.10,.46,2.20),14,.37,.20,.36)
+	quoin_stack(k,Vector3(2.10,.46,-2.20),14,.37,.20,.36)
+	for z in [-1.72,-.58,.58,1.72]:
+		block(k,Vector3(2.10,1.42,z),Vector3(.17,2.74,.30),"ae9165")
+		block(k,Vector3(1.99,2.72,z),Vector3(.15,.22,.36),"c4a779")
+	block(k,Vector3(2.06,3.02,0),Vector3(.21,.10,4.74),"bda078")
+	block(k,Vector3(-.10,3.02,2.43),Vector3(4.22,.10,.18),"bda078")
+	machicolation_row(k,2.24,5.08,-1.64,1.64,5,.22)
+	for z in [-1.62,-.81,0,.81,1.62]:block(k,Vector3(2.08,5.26,z),Vector3(.22,.24,.18),"ae926a")
+	block(k,Vector3(-.10,5.56,0),Vector3(4.26,.24,4.96),"c6aa7b")
+	roof(k,Vector3(-.10,5.72,0),5.48,4.72,2.28)
+	dormer(k,Vector3(.76,6.10,-.96))
+	dormer(k,Vector3(.76,6.10,.96))
+	# Larger roof skyline: twin roof turrets, tall watchtower and inhabited hall.
+	turret(k,Vector3(-.80,5.64,-1.42),.44,1.36,true)
+	turret(k,Vector3(-.80,5.64,1.42),.44,1.36,true)
+	turret(k,Vector3(-1.56,0,-1.92),.74,6.54,true)
+	block(k,Vector3(.02,1.26,3.30),Vector3(3.08,2.52,1.92),"957c58")
+	roof(k,Vector3(.02,2.54,3.30),2.24,3.20,1.06)
+	chimney(k,Vector3(-.36,3.50,3.38),1.18)
+	chimney(k,Vector3(.62,3.58,2.78),1.04)
+	for x in [-.92,.22,1.28]:
+		block(k,Vector3(x,1.08,4.17),Vector3(.24,.62,.03),"253c42")
+	block(k,Vector3(1.74,1.34,3.08),Vector3(.06,1.92,.74),"594c34")
+	for z in [-.84,0,.84]:banner(k,Vector3(2.12,2.94,z),.96)
+	block(k,Vector3(.12,8.22,0),Vector3(.07,1.44,.07),"b49658")
+	banner(k,Vector3(.12,8.56,0),.96)
 func courtyard():
 	# Paving, low enclosing side ramparts, stairway and supplies.
 	var p:Node3D=game.castle
@@ -280,15 +337,18 @@ func courtyard():
 		for y in [.10,.46]:round_part(p,at+Vector3(0,y,0),.25,.25,.06,"354b4d",10)
 func mage_tower():
 	var tower:CastleStructure=game.castle.structures.tower
-	turret(tower,Vector3.ZERO,.74,4.70,true)
-	for z in [-.40,.40]:slit(tower,Vector3(.68,3.72,z),.16,.72)
-	banner(tower,Vector3(.77,2.6,0),.86)
+	turret(tower,Vector3.ZERO,.82,5.20,true)
+	for z in [-.48,0,.48]:slit(tower,Vector3(.76,3.98,z),.16,.76)
+	machicolation_row(tower,.84,4.36,-.54,.54,3,.18)
+	banner(tower,Vector3(.88,2.92,0),.96)
+	brazier(tower,Vector3(1.22,0,0))
+	brazier(tower,Vector3(.30,5.08,0))
 func build(owner_game: Node3D):
 	game=owner_game;rng.seed=671
 	courtyard()
 	wall(game.castle.structures.north,3.10)
 	wall(game.castle.structures.south,3.10)
-	for z in [-5.2,5.2]:turret(game.castle,Vector3(-4,0,z),.87,2.87)
+	for z in [-5.2,5.2]:turret(game.castle,Vector3(-4.12,0,z),1.02,3.42,true)
 	gatehouse();keep();mage_tower()
 	for batch in batches.values():
 		var mesh:=MeshInstance3D.new();mesh.name="BatchedArchitecture"

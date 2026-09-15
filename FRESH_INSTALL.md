@@ -1,8 +1,8 @@
 # Castlehold — fresh install
 
-`Castlehold-Fresh-Install.zip` contains the complete Stone & Steel 0.4.1 source project, all game assets, tests and the Android build workflow. It can be extracted into an empty repository. Earlier Castlehold files are not required.
+`Castlehold-Fresh-Install.zip` contains the complete Stone & Steel 0.4.4 source project, all game assets, tests and the Android build workflow. It can be extracted into an empty repository. Earlier Castlehold files are not required.
 
-Included: 100 nonstop waves, four giant bosses, medieval defenders, the orc/ogre horde, detailed brown castle masonry, stronger enemy attacks, defeat voices, adjustable medieval music, pause, recruitment, repairs and finger scouting.
+Included: 100 nonstop waves, four giant bosses, medieval defenders, the orc/ogre horde, detailed brown castle masonry, stronger enemy attacks, louder character defeat voices, 1×/2×/3× battle speed, adjustable medieval music, pause, recruitment, repairs and finger scouting.
 
 ## 1. Create the repository
 

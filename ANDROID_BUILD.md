@@ -1,6 +1,6 @@
 # Android build
 
-Current game: **0.4.1 Stone & Steel**, version code 10. `Castlehold-Fresh-Install.zip` contains the entire source tree and assets for a new repository. Use **FRESH_INSTALL.md** or the command block in README.md. Run `git pull --ff-only` before extraction so Codespaces receives the uploaded ZIP.
+Current game: **0.4.4 Stone & Steel**, version code 13. `Castlehold-Fresh-Install.zip` contains the entire source tree and assets for a new repository. Use **FRESH_INSTALL.md** or the command block in README.md. Run `git pull --ff-only` before extraction so Codespaces receives the uploaded ZIP.
 
 Engine pinned: Godot 4.7.2 stable, standard GDScript edition. Android preset: arm64, landscape, immersive, offline, debug package `com.castlehold.firststand`. No C# or Gradle plugin is required for the supplied APK preset.
 
@@ -18,7 +18,7 @@ If a workflow run is named **Add files via upload**, it may be the run triggered
 
 The complete source ZIP has no wrapper folder and needs no previous game files. Uploading the ZIP alone leaves its files archived; the source commit installs and triggers the workflow.
 
-Earlier builds were installed by the user. This new update has been validated locally with the pinned engine; its GitHub Actions run and Android installation still need to be confirmed. A debug APK is for testing, not a Play Store release. Its signing key is regenerated on each CI run; updates from different runs may require uninstall/reinstall, which removes local progress. Before repeated distribution, store one persistent private debug key in GitHub Actions secrets and load it in the workflow. Never commit a release key.
+Earlier builds were installed by the user. This 0.4.2 package has passed local archive/static/resource checks in the current workspace; the included GitHub Actions run is the authoritative Godot 4.7.2 import/parser/test/export check, and Android installation still needs device confirmation. A debug APK is for testing, not a Play Store release. Its signing key is regenerated on each CI run; updates from different runs may require uninstall/reinstall, which removes local progress. Before repeated distribution, store one persistent private debug key in GitHub Actions secrets and load it in the workflow. Never commit a release key.
 
 ## Local export
 Install Godot's matching export templates, OpenJDK 17 and Android SDK. Configure Editor Settings → Export → Android with SDK and Java paths. The included workflow pins platform 35 and build-tools 35.0.1; verify these requirements against the engine when changing versions. For non-Gradle APK export, the prebuilt templates supply native code. Custom native/Gradle builds require the additional NDK/CMake dependencies described by Godot.
@@ -52,6 +52,15 @@ The APK must still be built by Actions and reviewed on a phone. Inspect shamans 
 
 The Siege Bosses source includes the HTTP/1.1 retry fix for interrupted engine/template downloads. Its CI also runs the boss attack, pause, save, reinforcement and final-victory checks before APK export.
 
-## Stone & Steel 0.4.1
+## Stone & Steel 0.4.2 — Speed & Voices
 
-Version code 10 retains the package ID, version 2 campaign checkpoints and separate audio preferences. The three shared 512² character atlases use the existing Android texture imports. Nine short mono 24 kHz defeat clips are preloaded into a two-player pool on the Effects bus; CI includes `tests/defeat_voices.gd`. Test device speaker clarity and crowd overlap, warmer castle surfaces, fine armor shimmer, giant silhouettes and pause/background behavior. No local Android APK was exported for this update.
+Version code 11 retains the package ID, version 2 campaign checkpoints and separate audio preferences. The existing nine short mono 24 kHz defeat clips now use a fixed four-player voice pool on the Effects bus with louder per-character gain and speed-aware anti-spam timing. The top HUD cycles 1× / 2× / 3× using Godot engine time scaling so combat systems remain synchronized. CI includes both `tests/defeat_voices.gd` and `tests/battle_speed.gd`. Test device speaker clarity, crowd overlap, speed changes, pause/resume and background behavior. No local Android APK was exported in this workspace.
+
+
+## Stone & Steel 0.4.4 — Castle overhaul
+
+Version code 13 keeps the same Android package ID and save data shape but upgrades the fortress asset with a more dramatic silhouette: taller gatehouse crown, larger flanking towers, a taller keep, twin roof turrets, a stronger watchtower and heavier buttressing. Speed control, louder defeat voices and gameplay systems remain as in 0.4.3.
+
+## Stone & Steel 0.4.3 — Castle polish
+
+Version code 12 retains the package ID, version 2 campaign checkpoints and separate audio preferences. This art pass improves the fortress silhouette and front-facing detail with under-parapet machicolations, a heavier gatehouse crown, keep corner quoins, added buttresses, roof dormer, chimneys and small tower accents. Battle speed, audio behavior and balance remain as in 0.4.2. No local Android APK was exported in this workspace.

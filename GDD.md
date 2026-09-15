@@ -1,5 +1,7 @@
 # Castlehold — active design change, September 2026
 
+Version 0.4.4 keeps the 1×/2×/3× synchronized battle-speed control and louder four-channel human/orc/ogre defeat voices, and replaces the earlier light castle polish with a fuller fortress overhaul: larger gatehouse towers, a raised watch chamber, a much taller keep, twin roof turrets, a stronger watchtower and roofed corner towers. Combat balance is otherwise unchanged from 0.4.3.
+
 The latest user direction supersedes the original preparation/aftermath rounds and 30-wave campaign schedule for the current playable mode. Version 0.2.0 is a **100-wave continuous siege**: 10–15 seconds of enemy reinforcements, then a 3–5 second gap. Existing combat continues through gaps. Recruitment and Gate/Keep repairs stay available; Pause freezes the siege while allowing management.
 
 The medieval character redesign includes archers, sword-and-shield infantry, spearmen and mounted knights, plus corresponding enemy infantry/ranged/cavalry threats. Warm brown sandstone and smaller masonry replace the cooler fortress palette. Finger scouting remains. Surviving troops heal at wave starts without being recreated; castle damage persists. Wave-start checkpoints support paused resume/retry.
